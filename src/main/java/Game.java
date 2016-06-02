@@ -14,6 +14,12 @@ public class Game {
         while (true) {
             try {
                 board.show();
+
+                if (board.emptyFields() == 0) {
+                    System.out.println("You lost.");
+                    return;
+                }
+
                 // todo (02.06.2016): implement movement
                 String input = keyboard.readLine();
                 board.add();
