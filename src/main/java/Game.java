@@ -14,6 +14,7 @@ public class Game {
         while (true) {
             try {
                 board.show();
+                // todo (02.06.2016): implement movement
                 String input = keyboard.readLine();
                 board.add();
             } catch (IOException e) {
