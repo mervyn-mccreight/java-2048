@@ -36,20 +36,20 @@ public class Board {
         this.dimension = dimension;
     }
 
-    public List<Spot> row(int x) {
-        return state.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().x() == x)
-                .sorted(Comparator.comparing(entry -> entry.getKey().y(), naturalOrder()))
-                .map(Entry::getValue)
-                .collect(toList());
-    }
-
-    public List<Spot> column(int y) {
+    public List<Spot> row(int y) {
         return state.entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().y() == y)
                 .sorted(Comparator.comparing(entry -> entry.getKey().x(), naturalOrder()))
+                .map(Entry::getValue)
+                .collect(toList());
+    }
+
+    public List<Spot> column(int x) {
+        return state.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().x() == x)
+                .sorted(Comparator.comparing(entry -> entry.getKey().y(), naturalOrder()))
                 .map(Entry::getValue)
                 .collect(toList());
     }
