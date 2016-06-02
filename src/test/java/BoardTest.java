@@ -25,4 +25,12 @@ public class BoardTest {
         assertThat(empty.column(2), is(empties));
         assertThat(empty.column(3), is(empties));
     }
+
+    @Test
+    public void add_oneFieldIsFilled() throws Exception {
+        Board empty = Board.createEmpty(4);
+        assertThat(empty.emptyFields(), is(16L));
+        empty.add();
+        assertThat(empty.emptyFields(), is(15L));
+    }
 }

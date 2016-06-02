@@ -5,4 +5,15 @@ public class Spot {
     public Spot(int value) {
         this.value = value;
     }
+
+    public String print() {
+        if (EMPTY.equals(this)) {
+            return " ";
+        }
+        return String.valueOf(value);
+    }
+
+    public Spot improve() {
+        return new Spot(this.value * 2);
+    }
 }
