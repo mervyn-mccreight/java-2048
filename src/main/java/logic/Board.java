@@ -128,11 +128,6 @@ public class Board {
 
     public static List<Spot> collapse(List<Spot> line) {
         List<Spot> filtered = line.filter(s -> !s.equals(Spot.EMPTY));
-
-        if (filtered.size() == line.size()) {
-            return line;
-        }
-
         List<Spot> list = filtered.foldLeft(List.empty(),
                 (a, l) -> {
                     if (a.isEmpty()) {

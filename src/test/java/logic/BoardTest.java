@@ -44,7 +44,7 @@ public class BoardTest {
     @Test
     public void collapseFullLine() throws Exception {
         List<Spot> line = List.of(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
-        List<Spot> expected = List.of(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
+        List<Spot> expected = List.of(new Spot(4), new Spot(4), Spot.EMPTY, Spot.EMPTY);
 
         assertThat(Board.collapse(line), is(expected));
     }
