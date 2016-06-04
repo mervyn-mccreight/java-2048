@@ -6,10 +6,11 @@ import javaslang.collection.Stream;
 import logic.content.Coordinate;
 import logic.content.Spot;
 
-import java.util.Collections;
+import java.security.SecureRandom;
 import java.util.Comparator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import static java.util.Comparator.naturalOrder;
 import static javaslang.collection.List.ofAll;
@@ -17,6 +18,7 @@ import static javaslang.collection.List.ofAll;
 public class Board {
     private final Map<Coordinate, Spot> state;
     private final int dimension;
+    private final Random random = new SecureRandom();
 
     public static Board createEmpty(int dimension) {
         Map<Coordinate, Spot> entries = Stream.from(0).take(dimension).crossProduct().map(
@@ -108,22 +110,20 @@ public class Board {
     }
 
     public void add() {
-        // todo (04.06.2016): clean up. do not use java lists.
-        java.util.List<Coordinate> collect = List.ofAll(state.entrySet())
+        List<Coordinate> collect = List.ofAll(state.entrySet())
                 .filter(coordinateSpotEntry -> coordinateSpotEntry.getValue().equals(Spot.EMPTY))
-                .map(Entry::getKey)
-                .toJavaList();
+                .map(Entry::getKey);
 
+        // can not add something to an full board.
         if (collect.isEmpty()) {
             return;
         }
 
-        Collections.shuffle(collect);
+        Coordinate randomCoordinate = collect.get(random.nextInt(collect.size()));
 
-        Coordinate coordinate = collect.get(0);
-        Spot spot = state.get(coordinate);
+        Spot spot = state.get(randomCoordinate);
         Spot improved = spot.improve();
-        state.replace(coordinate, improved);
+        state.replace(randomCoordinate, improved);
     }
 
     public static List<Spot> collapse(List<Spot> line) {
