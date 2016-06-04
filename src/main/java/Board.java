@@ -17,7 +17,7 @@ public class Board {
     private final int dimension;
 
     public static Board createEmpty(int dimension) {
-        ArrayList<Entry<Coordinate, Spot>> entries = new ArrayList<>();
+        List<Entry<Coordinate, Spot>> entries = new ArrayList<>();
 
         for (int x = 0; x < dimension; x++) {
             for (int y = 0; y < dimension; y++) {
