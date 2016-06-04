@@ -2,6 +2,7 @@ import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,6 +70,17 @@ public class Board {
                 .count();
     }
 
+    public void left() {
+        for (int y = 0; y < dimension; y++) {
+            List<Spot> row = row(y);
+            List<Spot> collapsedRow = collapse(row);
+
+            for (int x = 0; x < collapsedRow.size(); x++) {
+                state.replace(new Coordinate(x, y), collapsedRow.get(x));
+            }
+        }
+    }
+
     public void add() {
         List<Coordinate> collect = state.entrySet()
                 .stream()
@@ -86,5 +98,43 @@ public class Board {
         Spot spot = state.get(coordinate);
         Spot improved = spot.improve();
         state.replace(coordinate, improved);
+    }
+
+    public static List<Spot> collapse(List<Spot> line) {
+        List<Spot> filtered = line.stream()
+                .sequential()
+                .filter(s -> !s.equals(Spot.EMPTY)).collect(Collectors.toList());
+
+        // a full line can not collapse
+        if (filtered.size() == line.size()) {
+            return line;
+        }
+
+        // todo (04.06.2016): this re-implements a fold-left (but only if it is a sequential stream!)
+        List<Spot> reduce = filtered
+                .stream()
+                .sequential()
+                .reduce(new LinkedList<>(),
+                        (acc, next) -> {
+                            if (acc.isEmpty()) {
+                                acc.add(next);
+                                return acc;
+                            }
+
+                            if (acc.getLast().equals(next)) {
+                                acc.removeLast();
+                                acc.add(next.improve());
+                            } else {
+                                acc.add(next);
+                            }
+                            return acc;
+                        },
+                        (identity, acc) -> acc
+                );
+
+        while (reduce.size() != line.size()) {
+            reduce.add(Spot.EMPTY);
+        }
+        return reduce;
     }
 }

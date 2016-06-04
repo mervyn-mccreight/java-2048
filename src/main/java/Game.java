@@ -21,7 +21,14 @@ public class Game {
                 }
 
                 // todo (02.06.2016): implement movement
-                String input = keyboard.readLine();
+                String input = keyboard.readLine().toLowerCase();
+
+                switch (input) {
+                    case "a":
+                        board.left();
+                        break;
+                }
+
                 board.add();
             } catch (IOException e) {
                 throw new RuntimeException(e);

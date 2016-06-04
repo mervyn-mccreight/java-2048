@@ -33,4 +33,28 @@ public class BoardTest {
         empty.add();
         assertThat(empty.emptyFields(), is(15L));
     }
+
+    @Test
+    public void collapseSimpleLine() throws Exception {
+        List<Spot> line = Arrays.asList(new Spot(2), Spot.EMPTY, new Spot(2), Spot.EMPTY);
+        List<Spot> expected = Arrays.asList(new Spot(4), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
+
+        assertThat(Board.collapse(line), is(expected));
+    }
+
+    @Test
+    public void collapseComplexLine() throws Exception {
+        List<Spot> line = Arrays.asList(new Spot(2), Spot.EMPTY, new Spot(2), new Spot(4));
+        List<Spot> expected = Arrays.asList(new Spot(8), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
+
+        assertThat(Board.collapse(line), is(expected));
+    }
+
+    @Test
+    public void collapseFullLine() throws Exception {
+        List<Spot> line = Arrays.asList(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
+        List<Spot> expected = Arrays.asList(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
+
+        assertThat(Board.collapse(line), is(expected));
+    }
 }
