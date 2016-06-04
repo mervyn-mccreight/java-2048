@@ -1,10 +1,8 @@
 package logic;
 
+import javaslang.collection.List;
 import logic.content.Spot;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -29,24 +27,24 @@ public class BoardTest {
 
     @Test
     public void collapseSimpleLine() throws Exception {
-        List<Spot> line = Arrays.asList(new Spot(2), Spot.EMPTY, new Spot(2), Spot.EMPTY);
-        List<Spot> expected = Arrays.asList(new Spot(4), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
+        List<Spot> line = List.of(new Spot(2), Spot.EMPTY, new Spot(2), Spot.EMPTY);
+        List<Spot> expected = List.of(new Spot(4), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
 
         assertThat(Board.collapse(line), is(expected));
     }
 
     @Test
     public void collapseComplexLine() throws Exception {
-        List<Spot> line = Arrays.asList(new Spot(2), Spot.EMPTY, new Spot(2), new Spot(4));
-        List<Spot> expected = Arrays.asList(new Spot(8), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
+        List<Spot> line = List.of(new Spot(2), Spot.EMPTY, new Spot(2), new Spot(4));
+        List<Spot> expected = List.of(new Spot(8), Spot.EMPTY, Spot.EMPTY, Spot.EMPTY);
 
         assertThat(Board.collapse(line), is(expected));
     }
 
     @Test
     public void collapseFullLine() throws Exception {
-        List<Spot> line = Arrays.asList(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
-        List<Spot> expected = Arrays.asList(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
+        List<Spot> line = List.of(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
+        List<Spot> expected = List.of(new Spot(2), new Spot(2), new Spot(2), new Spot(2));
 
         assertThat(Board.collapse(line), is(expected));
     }

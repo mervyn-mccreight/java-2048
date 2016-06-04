@@ -1,40 +1,31 @@
 package logic;
 
+import javaslang.Tuple;
+import javaslang.collection.List;
+import javaslang.collection.Stream;
 import logic.content.Coordinate;
 import logic.content.Spot;
 
-import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.naturalOrder;
-import static java.util.stream.Collectors.toList;
-import static java.util.stream.Collectors.toMap;
+import static javaslang.collection.List.ofAll;
 
 public class Board {
     private final Map<Coordinate, Spot> state;
     private final int dimension;
 
     public static Board createEmpty(int dimension) {
-        List<Entry<Coordinate, Spot>> entries = new ArrayList<>();
-
-        for (int x = 0; x < dimension; x++) {
-            for (int y = 0; y < dimension; y++) {
-                entries.add(new SimpleImmutableEntry<>(new Coordinate(x, y), Spot.EMPTY));
-            }
-        }
-
-        return new Board(entries
-                .stream()
-                .collect(toMap(Entry::getKey, Entry::getValue)),
-                dimension
+        Map<Coordinate, Spot> entries = Stream.from(0).take(dimension).crossProduct().map(
+                t -> Tuple.of(t._1, t._2, Spot.EMPTY)
+        ).toJavaMap(
+                t -> Tuple.of(new Coordinate(t._1, t._2), t._3)
         );
+
+        return new Board(entries, dimension);
     }
 
     private Board(Map<Coordinate, Spot> state, int dimension) {
@@ -43,29 +34,23 @@ public class Board {
     }
 
     private List<Spot> row(int y) {
-        return state.entrySet()
-                .stream()
+        return ofAll(state.entrySet())
                 .filter(entry -> entry.getKey().y() == y)
                 .sorted(Comparator.comparing(entry -> entry.getKey().x(), naturalOrder()))
-                .map(Entry::getValue)
-                .collect(toList());
+                .map(Entry::getValue);
     }
 
     private List<Spot> column(int x) {
-        return state.entrySet()
-                .stream()
+        return ofAll(state.entrySet())
                 .filter(entry -> entry.getKey().x() == x)
                 .sorted(Comparator.comparing(entry -> entry.getKey().y(), naturalOrder()))
-                .map(Entry::getValue)
-                .collect(toList());
+                .map(Entry::getValue);
     }
 
     public void show() {
-        List<String> rows = new ArrayList<>();
-        for (int i = 0; i < dimension; i++) {
-            rows.add(row(i).stream().map(Spot::print).collect(Collectors.joining(" | ")));
-        }
-        rows.forEach(System.out::println);
+        Stream.from(0).take(dimension).map(
+                i -> row(i).map(Spot::print).foldLeft("", (a, l) -> a + " | " + l)
+        ).forEach(System.out::println);
     }
 
     public long emptyFields() {
@@ -76,61 +61,58 @@ public class Board {
     }
 
     public void left() {
-        for (int y = 0; y < dimension; y++) {
-            List<Spot> row = row(y);
-            List<Spot> collapsedRow = collapse(row);
+        Stream.from(0).take(dimension).forEach(
+                y -> {
+                    List<Spot> result = collapse(row(y));
 
-            for (int x = 0; x < collapsedRow.size(); x++) {
-                state.replace(new Coordinate(x, y), collapsedRow.get(x));
-            }
-        }
+                    Stream.from(0).take(result.size()).forEach(
+                            x -> state.replace(new Coordinate(x, y), result.get(x))
+                    );
+                }
+        );
     }
 
     public void right() {
-        for (int y = 0; y < dimension; y++) {
-            List<Spot> row = row(y);
-            Collections.reverse(row);
+        Stream.from(0).take(dimension).forEach(
+                y -> {
+                    List<Spot> result = collapse(row(y).reverse()).reverse();
 
-            List<Spot> collapsedRow = collapse(row);
-            Collections.reverse(collapsedRow);
-
-            for (int x = 0; x < collapsedRow.size(); x++) {
-                state.replace(new Coordinate(x, y), collapsedRow.get(x));
-            }
-        }
+                    Stream.from(0).take(result.size()).forEach(
+                            x -> state.replace(new Coordinate(x, y), result.get(x))
+                    );
+                }
+        );
     }
 
     public void up() {
-        for (int x = 0; x < dimension; x++) {
-            List<Spot> column = column(x);
-            List<Spot> collapsed = collapse(column);
+        Stream.from(0).take(dimension).forEach(
+                x -> {
+                    List<Spot> result = collapse(column(x));
 
-            for (int y = 0; y < collapsed.size(); y++) {
-                state.replace(new Coordinate(x, y), collapsed.get(y));
-            }
-        }
+                    Stream.from(0).take(result.size()).forEach(
+                            y -> state.replace(new Coordinate(x, y), result.get(y))
+                    );
+                }
+        );
     }
 
     public void down() {
-        for (int x = 0; x < dimension; x++) {
-            List<Spot> column = column(x);
-            Collections.reverse(column);
-
-            List<Spot> collapsed = collapse(column);
-            Collections.reverse(collapsed);
-
-            for (int y = 0; y < collapsed.size(); y++) {
-                state.replace(new Coordinate(x, y), collapsed.get(y));
-            }
-        }
+        Stream.from(0).take(dimension).forEach(
+                x -> {
+                    List<Spot> result = collapse(column(x).reverse()).reverse();
+                    Stream.from(0).take(result.size()).forEach(
+                            y -> state.replace(new Coordinate(x, y), result.get(y))
+                    );
+                }
+        );
     }
 
     public void add() {
-        List<Coordinate> collect = state.entrySet()
-                .stream()
+        // todo (04.06.2016): clean up. do not use java lists.
+        java.util.List<Coordinate> collect = List.ofAll(state.entrySet())
                 .filter(coordinateSpotEntry -> coordinateSpotEntry.getValue().equals(Spot.EMPTY))
                 .map(Entry::getKey)
-                .collect(toList());
+                .toJavaList();
 
         if (collect.isEmpty()) {
             return;
@@ -145,40 +127,26 @@ public class Board {
     }
 
     public static List<Spot> collapse(List<Spot> line) {
-        List<Spot> filtered = line.stream()
-                .sequential()
-                .filter(s -> !s.equals(Spot.EMPTY)).collect(Collectors.toList());
+        List<Spot> filtered = line.filter(s -> !s.equals(Spot.EMPTY));
 
-        // a full line can not collapse
         if (filtered.size() == line.size()) {
             return line;
         }
 
-        // todo (04.06.2016): this re-implements a fold-left (but only if it is a sequential stream!)
-        List<Spot> reduce = filtered
-                .stream()
-                .sequential()
-                .reduce(new LinkedList<>(),
-                        (acc, next) -> {
-                            if (acc.isEmpty()) {
-                                acc.add(next);
-                                return acc;
-                            }
+        List<Spot> list = filtered.foldLeft(List.empty(),
+                (a, l) -> {
+                    if (a.isEmpty()) {
+                        return a.append(l);
+                    }
 
-                            if (acc.getLast().equals(next)) {
-                                acc.removeLast();
-                                acc.add(next.improve());
-                            } else {
-                                acc.add(next);
-                            }
-                            return acc;
-                        },
-                        (identity, acc) -> acc
-                );
+                    if (a.last().equals(l)) {
+                        return a.init().append(l.improve());
+                    }
 
-        while (reduce.size() != line.size()) {
-            reduce.add(Spot.EMPTY);
-        }
-        return reduce;
+                    return a.append(l);
+                }
+        );
+
+        return Stream.ofAll(list).extend(Spot.EMPTY).take(line.length()).toList();
     }
 }
