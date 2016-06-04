@@ -28,6 +28,15 @@ public class Game {
                     case "a":
                         board.left();
                         break;
+                    case "d":
+                        board.right();
+                        break;
+                    case "w":
+                        board.up();
+                        break;
+                    case "s":
+                        board.down();
+                        break;
                 }
 
                 board.add();

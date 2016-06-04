@@ -81,6 +81,45 @@ public class Board {
         }
     }
 
+    public void right() {
+        for (int y = 0; y < dimension; y++) {
+            List<Spot> row = row(y);
+            Collections.reverse(row);
+
+            List<Spot> collapsedRow = collapse(row);
+            Collections.reverse(collapsedRow);
+
+            for (int x = 0; x < collapsedRow.size(); x++) {
+                state.replace(new Coordinate(x, y), collapsedRow.get(x));
+            }
+        }
+    }
+
+    public void up() {
+        for (int x = 0; x < dimension; x++) {
+            List<Spot> column = column(x);
+            List<Spot> collapsed = collapse(column);
+
+            for (int y = 0; y < collapsed.size(); y++) {
+                state.replace(new Coordinate(x, y), collapsed.get(y));
+            }
+        }
+    }
+
+    public void down() {
+        for (int x = 0; x < dimension; x++) {
+            List<Spot> column = column(x);
+            Collections.reverse(column);
+
+            List<Spot> collapsed = collapse(column);
+            Collections.reverse(collapsed);
+
+            for (int y = 0; y < collapsed.size(); y++) {
+                state.replace(new Coordinate(x, y), collapsed.get(y));
+            }
+        }
+    }
+
     public void add() {
         List<Coordinate> collect = state.entrySet()
                 .stream()
