@@ -42,7 +42,7 @@ public class Board {
         this.dimension = dimension;
     }
 
-    public List<Spot> row(int y) {
+    private List<Spot> row(int y) {
         return state.entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().y() == y)
@@ -51,7 +51,7 @@ public class Board {
                 .collect(toList());
     }
 
-    public List<Spot> column(int x) {
+    private List<Spot> column(int x) {
         return state.entrySet()
                 .stream()
                 .filter(entry -> entry.getKey().x() == x)
