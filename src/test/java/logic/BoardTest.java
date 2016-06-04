@@ -1,3 +1,6 @@
+package logic;
+
+import logic.content.Spot;
 import org.junit.Test;
 
 import java.util.Arrays;

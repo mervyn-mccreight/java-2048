@@ -1,3 +1,8 @@
+package logic;
+
+import logic.content.Coordinate;
+import logic.content.Spot;
+
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collections;

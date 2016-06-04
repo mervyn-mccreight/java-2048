@@ -1,3 +1,5 @@
+package logic.content;
+
 import java.util.Objects;
 
 public class Spot {
