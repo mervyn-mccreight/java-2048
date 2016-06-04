@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 public class Game {
     public static void main(String[] args) {
         Board board = Board.createEmpty(4);
+        board.add();
 
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
