@@ -1,10 +1,10 @@
-package logic;
+package de.merv.logic;
 
+import de.merv.logic.content.Coordinate;
+import de.merv.logic.content.Spot;
 import javaslang.Tuple;
 import javaslang.collection.List;
 import javaslang.collection.Stream;
-import logic.content.Coordinate;
-import logic.content.Spot;
 
 import java.security.SecureRandom;
 import java.util.Comparator;

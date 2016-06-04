@@ -1,7 +1,7 @@
-package logic;
+package de.merv.logic;
 
+import de.merv.logic.content.Spot;
 import javaslang.collection.List;
-import logic.content.Spot;
 import org.junit.Test;
 
 import static org.hamcrest.core.Is.is;

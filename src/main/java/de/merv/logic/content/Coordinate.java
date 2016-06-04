@@ -1,4 +1,4 @@
-package logic.content;
+package de.merv.logic.content;
 
 import java.util.Objects;
 

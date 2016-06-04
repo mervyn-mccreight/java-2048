@@ -1,4 +1,6 @@
-import logic.Board;
+package de.merv;
+
+import de.merv.logic.Board;
 
 import java.io.BufferedReader;
 import java.io.IOException;
