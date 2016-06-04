@@ -51,7 +51,7 @@ public class Board {
 
     public void show() {
         Stream.from(0).take(dimension).map(
-                i -> row(i).map(Spot::print).foldLeft("", (a, l) -> a + " | " + l)
+                i -> row(i).map(Spot::print).intersperse(" | ").foldLeft("", (a, l) -> a + l)
         ).forEach(System.out::println);
     }
 
