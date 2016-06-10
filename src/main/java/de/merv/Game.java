@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 
 public class Game {
     public static void main(String[] args) {
-        GameState gameState = GameState.createEmpty(4);
+        GameState gameState = GameState.initial(4);
         gameState.add();
 
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
@@ -16,14 +16,9 @@ public class Game {
         System.out.println("README:");
         System.out.println("Type w, a, s, d to tilt the gameState and press enter to make the move.");
 
-        while (true) {
+        while (!gameState.isLost()) {
             try {
-                gameState.show();
-
-                if (gameState.emptyFields() == 0) {
-                    System.out.println("You lost.");
-                    return;
-                }
+                gameState.print(System.out);
 
                 // todo (02.06.2016): implement movement
                 String input = keyboard.readLine().toLowerCase();
@@ -48,5 +43,8 @@ public class Game {
                 throw new RuntimeException(e);
             }
         }
+
+        gameState.print(System.out);
+        System.out.println("The board is full. You lost!");
     }
 }
