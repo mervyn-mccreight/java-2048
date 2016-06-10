@@ -15,22 +15,22 @@ import java.util.Random;
 import static java.util.Comparator.naturalOrder;
 import static javaslang.collection.List.ofAll;
 
-public class Board {
+public class GameState {
     private final Map<Coordinate, Spot> state;
     private final int dimension;
     private final Random random = new SecureRandom();
 
-    public static Board createEmpty(int dimension) {
+    public static GameState createEmpty(int dimension) {
         Map<Coordinate, Spot> entries = Stream.from(0).take(dimension).crossProduct().map(
                 t -> Tuple.of(t._1, t._2, Spot.EMPTY)
         ).toJavaMap(
                 t -> Tuple.of(new Coordinate(t._1, t._2), t._3)
         );
 
-        return new Board(entries, dimension);
+        return new GameState(entries, dimension);
     }
 
-    private Board(Map<Coordinate, Spot> state, int dimension) {
+    private GameState(Map<Coordinate, Spot> state, int dimension) {
         this.state = state;
         this.dimension = dimension;
     }
