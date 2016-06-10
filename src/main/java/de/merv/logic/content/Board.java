@@ -7,6 +7,7 @@ import javaslang.collection.Map;
 import javaslang.collection.SortedMap;
 import javaslang.collection.Stream;
 import javaslang.collection.TreeMap;
+import javaslang.control.Option;
 
 import java.util.Comparator;
 
@@ -22,13 +23,13 @@ public class Board {
                 pair -> Tuple.of(new Coordinate(pair.get(0), pair.get(1)), Spot.EMPTY)
         );
 
-        SortedMap<Coordinate, Spot> emptyState = TreeMap.empty(
+        SortedMap<Coordinate, Spot> sortedStateMap = TreeMap.empty(
                 Comparator
                         .comparingInt(Coordinate::x)
                         .thenComparingInt(Coordinate::y)
         );
 
-        return new Board(emptyState.merge(state));
+        return new Board(sortedStateMap.merge(state));
     }
 
     private List<Spot> row(int y) {
@@ -47,5 +48,22 @@ public class Board {
 
     public int empties() {
         return state.values().count(Spot::isEmpty);
+    }
+
+    public List<String> printableRows() {
+        Option<Coordinate> xDimension = state.keySet().maxBy(Comparator.comparingInt(Coordinate::x));
+        Option<Coordinate> yDimension = state.keySet().maxBy(Comparator.comparingInt(Coordinate::y));
+
+        if (xDimension.getOrElseThrow(RuntimeException::new).x() != yDimension.getOrElseThrow(RuntimeException::new).y()) {
+            throw new RuntimeException("not equally dimensioned board.");
+        }
+
+        int dimension = yDimension.get().y() + 1;
+
+        return Stream.from(0).take(dimension).map(
+                i -> row(i)
+                        .map(Spot::print).intersperse("|")
+                        .foldLeft("", (a, l) -> a + l)
+        ).toList();
     }
 }
