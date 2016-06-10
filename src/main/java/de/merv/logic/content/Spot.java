@@ -17,6 +17,10 @@ public class Spot {
         return String.valueOf(value);
     }
 
+    public boolean isEmpty() {
+        return this.equals(Spot.EMPTY);
+    }
+
     public Spot improve() {
         return new Spot(this.value * 2);
     }
