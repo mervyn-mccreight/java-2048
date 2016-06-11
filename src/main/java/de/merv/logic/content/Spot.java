@@ -44,4 +44,8 @@ public class Spot {
                 "value=" + "[" + print() + "]" +
                 '}';
     }
+
+    public int value() {
+        return value;
+    }
 }

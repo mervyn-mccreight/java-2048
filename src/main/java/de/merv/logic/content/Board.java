@@ -61,91 +61,105 @@ public class Board {
                 .toSet();
     }
 
-    public Board left() {
-        Stream<Tuple2<Coordinate, Spot>> newContent = Stream.from(0).take(dimension()).flatMap(
+    public Tuple2<Integer, Board> left() {
+        Stream<Tuple2<Integer, List<Tuple2<Coordinate, Spot>>>> withCoordinates = Stream.from(0).take(dimension()).map(
                 y -> {
-                    List<Spot> result = collapse(row(y));
+                    Tuple2<Integer, List<Spot>> result = collapse(row(y));
 
-                    List<Coordinate> coordinates = Stream.from(0).take(result.size()).map(
+                    List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
                             x -> new Coordinate(x, y)
                     ).toList();
 
-                    return coordinates.zip(result);
+                    return Tuple.of(result._1(), coordinates.zip(result._2()));
                 }
         );
 
-        return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newContent));
+        Stream<Tuple2<Coordinate, Spot>> newSpots = withCoordinates.flatMap(Tuple2::_2);
+        int points = withCoordinates.map(Tuple2::_1).sum().intValue();
+
+        return Tuple.of(points, new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newSpots)));
     }
 
-    public Board right() {
-        Stream<Tuple2<Coordinate, Spot>> newContent = Stream.from(0).take(dimension()).flatMap(
+    public Tuple2<Integer, Board> right() {
+        Stream<Tuple2<Integer, List<Tuple2<Coordinate, Spot>>>> withCoordinates = Stream.from(0).take(dimension()).map(
                 y -> {
-                    List<Spot> result = collapse(row(y).reverse()).reverse();
+                    Tuple2<Integer, List<Spot>> result = collapse(row(y).reverse());
+                    result = result.map(i -> i, List::reverse);
 
-                    List<Coordinate> coordinates = Stream.from(0).take(result.size()).map(
+                    List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
                             x -> new Coordinate(x, y)
                     ).toList();
 
-                    return coordinates.zip(result);
+                    return Tuple.of(result._1(), coordinates.zip(result._2()));
                 }
         );
 
-        return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newContent));
+        Stream<Tuple2<Coordinate, Spot>> newSpots = withCoordinates.flatMap(Tuple2::_2);
+        int points = withCoordinates.map(Tuple2::_1).sum().intValue();
+
+        return Tuple.of(points, new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newSpots)));
     }
 
-    public Board up() {
-        Stream<Tuple2<Coordinate, Spot>> newContent = Stream.from(0).take(dimension()).flatMap(
+    public Tuple2<Integer, Board> up() {
+        Stream<Tuple2<Integer, List<Tuple2<Coordinate, Spot>>>> withCoordinates = Stream.from(0).take(dimension()).map(
                 x -> {
-                    List<Spot> result = collapse(column(x));
+                    Tuple2<Integer, List<Spot>> result = collapse(column(x));
 
-                    List<Coordinate> coordinates = Stream.from(0).take(result.size()).map(
+                    List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
                             y -> new Coordinate(x, y)
                     ).toList();
 
-                    return coordinates.zip(result);
+                    return Tuple.of(result._1(), coordinates.zip(result._2()));
                 }
         );
 
-        return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newContent));
+        Stream<Tuple2<Coordinate, Spot>> newSpots = withCoordinates.flatMap(Tuple2::_2);
+        int points = withCoordinates.map(Tuple2::_1).sum().intValue();
+
+        return Tuple.of(points, new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newSpots)));
     }
 
-    public Board down() {
-        Stream<Tuple2<Coordinate, Spot>> newContent = Stream.from(0).take(dimension()).flatMap(
+    public Tuple2<Integer, Board> down() {
+        Stream<Tuple2<Integer, List<Tuple2<Coordinate, Spot>>>> withCoordinates = Stream.from(0).take(dimension()).map(
                 x -> {
-                    List<Spot> result = collapse(column(x).reverse()).reverse();
+                    Tuple2<Integer, List<Spot>> result = collapse(column(x).reverse());
+                    result = result.map(i -> i, List::reverse);
 
-                    List<Coordinate> coordinates = Stream.from(0).take(result.size()).map(
+                    List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
                             y -> new Coordinate(x, y)
                     ).toList();
 
-                    return coordinates.zip(result);
+                    return Tuple.of(result._1(), coordinates.zip(result._2()));
                 }
         );
 
-        return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newContent));
+        Stream<Tuple2<Coordinate, Spot>> newSpots = withCoordinates.flatMap(Tuple2::_2);
+        int points = withCoordinates.map(Tuple2::_1).sum().intValue();
+
+        return Tuple.of(points, new Board(TreeMap.ofEntries(SORTING_COMPARATOR, newSpots)));
     }
 
-    private List<Spot> collapse(List<Spot> toCollapse) {
-        List<Spot> collapsed = toCollapse
+    private Tuple2<Integer, List<Spot>> collapse(List<Spot> toCollapse) {
+        Tuple2<Integer, List<Spot>> collapsed = toCollapse
                 .filter(s -> !s.equals(Spot.EMPTY))
-                .foldLeft(List.empty(),
+                .foldLeft(Tuple.of(0, List.empty()),
                         (a, l) -> {
-                            if (a.isEmpty()) {
-                                return a.append(l);
+                            if (a._2().isEmpty()) {
+                                return Tuple.of(a._1(), a._2().append(l));
                             }
 
-                            if (a.last().equals(l)) {
-                                return a.init().append(l.improve());
+                            if (a._2().last().equals(l)) {
+                                return Tuple.of(a._1() + a._2().last().value() + l.value(), a._2().init().append(l.improve()));
                             }
 
-                            return a.append(l);
+                            return Tuple.of(a._1(), a._2().append(l));
                         }
                 );
 
-        return Stream.ofAll(collapsed)
+        return Tuple.of(collapsed._1(), Stream.ofAll(collapsed._2())
                 .extend(Spot.EMPTY)
                 .take(toCollapse.length())
-                .toList();
+                .toList());
     }
 
     public List<String> printableRows() {
