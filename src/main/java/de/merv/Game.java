@@ -14,7 +14,7 @@ public class Game {
         BufferedReader keyboard = new BufferedReader(new InputStreamReader(System.in));
 
         System.out.println("README:");
-        System.out.println("Type w, a, s, d to tilt the gameState and press enter to make the move.");
+        System.out.println("Type w, a, s, d to tilt the board and press enter to make the move.");
 
         while (!gameState.isLost()) {
             try {
