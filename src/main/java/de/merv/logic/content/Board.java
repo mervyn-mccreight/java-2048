@@ -2,8 +2,8 @@ package de.merv.logic.content;
 
 import javaslang.Tuple;
 import javaslang.Tuple2;
+import javaslang.collection.Iterator;
 import javaslang.collection.List;
-import javaslang.collection.Map;
 import javaslang.collection.Set;
 import javaslang.collection.SortedMap;
 import javaslang.collection.Stream;
@@ -24,13 +24,10 @@ public class Board {
     }
 
     public static Board empty(int dimension) {
-        Map<Coordinate, Spot> state = Stream.from(0).take(dimension).crossProduct(2).toMap(
+        Iterator<Tuple2<Coordinate, Spot>> emptySpots = Stream.from(0).take(dimension).crossProduct(2).map(
                 pair -> Tuple.of(new Coordinate(pair.get(0), pair.get(1)), Spot.EMPTY)
         );
-
-        SortedMap<Coordinate, Spot> sortedStateMap = TreeMap.empty(SORTING_COMPARATOR);
-
-        return new Board(sortedStateMap.merge(state));
+        return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, emptySpots));
     }
 
     private List<Spot> row(int y) {
