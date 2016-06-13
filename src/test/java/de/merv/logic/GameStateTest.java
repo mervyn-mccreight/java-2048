@@ -10,8 +10,9 @@ public class GameStateTest {
     @Test
     public void emptyGrid_gameIsNotLost() throws Exception {
         int dimension = 4;
-        GameState empty = GameState.initial(dimension);
+        GameState initial = GameState.initial(dimension);
 
-        assertThat(empty.isLost()).isFalse();
+        // todo (13.06.2016): this test is too weak.
+        assertThat(initial.isLost()).isFalse();
     }
 }
