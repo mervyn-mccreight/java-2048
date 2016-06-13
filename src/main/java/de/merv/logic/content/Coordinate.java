@@ -1,35 +1,18 @@
 package de.merv.logic.content;
 
-import java.util.Objects;
+import org.immutables.value.Value;
 
-public class Coordinate {
-    private final int x;
-    private final int y;
+@Value.Style(visibility = Value.Style.ImplementationVisibility.PACKAGE)
+@Value.Immutable(builder = false, copy = false)
+public abstract class Coordinate {
 
-    public Coordinate(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
+    @Value.Parameter
+    public abstract int x();
 
-    public int x() {
-        return x;
-    }
+    @Value.Parameter
+    public abstract int y();
 
-    public int y() {
-        return y;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Coordinate that = (Coordinate) o;
-        return x == that.x &&
-                y == that.y;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(x, y);
+    public static Coordinate of(int x, int y) {
+        return ImmutableCoordinate.of(x, y);
     }
 }

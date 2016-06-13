@@ -25,7 +25,7 @@ public class Board {
 
     public static Board empty(int dimension) {
         Iterator<Tuple2<Coordinate, Spot>> emptySpots = Stream.from(0).take(dimension).crossProduct(2).map(
-                pair -> Tuple.of(new Coordinate(pair.get(0), pair.get(1)), Spot.EMPTY)
+                pair -> Tuple.of(Coordinate.of(pair.get(0), pair.get(1)), Spot.EMPTY)
         );
         return new Board(TreeMap.ofEntries(SORTING_COMPARATOR, emptySpots));
     }
@@ -67,7 +67,7 @@ public class Board {
                     Tuple2<Integer, List<Spot>> result = collapse(row(y));
 
                     List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
-                            x -> new Coordinate(x, y)
+                            x -> Coordinate.of(x, y)
                     ).toList();
 
                     return Tuple.of(result._1(), coordinates.zip(result._2()));
@@ -87,7 +87,7 @@ public class Board {
                     result = result.map(i -> i, List::reverse);
 
                     List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
-                            x -> new Coordinate(x, y)
+                            x -> Coordinate.of(x, y)
                     ).toList();
 
                     return Tuple.of(result._1(), coordinates.zip(result._2()));
@@ -106,7 +106,7 @@ public class Board {
                     Tuple2<Integer, List<Spot>> result = collapse(column(x));
 
                     List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
-                            y -> new Coordinate(x, y)
+                            y -> Coordinate.of(x, y)
                     ).toList();
 
                     return Tuple.of(result._1(), coordinates.zip(result._2()));
@@ -126,7 +126,7 @@ public class Board {
                     result = result.map(i -> i, List::reverse);
 
                     List<Coordinate> coordinates = Stream.from(0).take(result._2().size()).map(
-                            y -> new Coordinate(x, y)
+                            y -> Coordinate.of(x, y)
                     ).toList();
 
                     return Tuple.of(result._1(), coordinates.zip(result._2()));
